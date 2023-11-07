@@ -8,11 +8,29 @@ import { Observable, throwError, catchError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 //Declaring the api url that will provide data for the client app
-const apiUrl = 'YOUR_HOSTED_API_URL_HERE/';
+const apiUrl = 'https://my-flix330.herokuapp.com/';
+
+enum GENRE_TYPES {
+  ACTION = 'action',
+  DRAMA = 'drama',
+  COMEDY = 'comedy',
+}
+
+interface MovieResponse {
+  id: string;
+  title: string;
+  genre: GENRE_TYPES;
+  director: string;
+  cast: string[];
+}
+
+interface MovieList {
+  movies: MovieResponse[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
-
 ////////////////////////////// GET //////////////////////////////
 
 /////////////// GET ALL MOVIES ///////////////
@@ -51,18 +69,21 @@ export class GetAllMoviesService {
 export class GetOneMovieService {
   constructor(private http: HttpClient) {}
 
-  public getOneMovie(title: string): Observable<any> {
+  public getOneMovie(id: string): Observable<MovieResponse> {
     const token = localStorage.getItem('token');
     return this.http
-      .get(apiUrl + 'movies/' + title, {
+      .get(apiUrl + 'movies/' + id, {
         headers: new HttpHeaders({
           Authorization: 'Bearer ' + token,
         }),
       })
-      .pipe(map(this.extractResponseData), catchError(this.handleError));
+      .pipe(
+        map(this.extractResponseData),
+        catchError(this.handleError)
+      ) as Observable<MovieResponse>;
   }
   // Non-typed response extraction
-  private extractResponseData(res: Object): any {
+  private extractResponseData(res: any): MovieResponse {
     const body = res;
     return body || {};
   }
@@ -210,12 +231,16 @@ export class GetFavortieMoviesService {
 ////////////////////////////// POST //////////////////////////////
 
 /////////////// USER REGISTRATION ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class UserRegistrationService {
   // Inject the HttpClient module to the constructor params
   // This will provide HttpClient to the entire class, making it available via this.http
   constructor(private http: HttpClient) {}
   // Making the api call for the user registration endpoint
   public userRegistration(userDetails: any): Observable<any> {
+    userDetails.Birthday = new Date(userDetails.Birthday);
     console.log(userDetails);
     return this.http
       .post(apiUrl + 'users', userDetails)
@@ -235,6 +260,9 @@ export class UserRegistrationService {
 }
 
 /////////////// USER LOGIN ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class UserLoginService {
   constructor(private http: HttpClient) {}
 
