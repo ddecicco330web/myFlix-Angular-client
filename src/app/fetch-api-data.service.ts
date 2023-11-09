@@ -24,16 +24,12 @@ interface MovieResponse {
   cast: string[];
 }
 
-interface MovieList {
-  movies: MovieResponse[];
-}
-
-@Injectable({
-  providedIn: 'root',
-})
 ////////////////////////////// GET //////////////////////////////
 
 /////////////// GET ALL MOVIES ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class GetAllMoviesService {
   constructor(private http: HttpClient) {}
 
@@ -45,12 +41,15 @@ export class GetAllMoviesService {
           Authorization: 'Bearer ' + token,
         }),
       })
-      .pipe(map(this.extractResponseData), catchError(this.handleError));
+      .pipe(
+        map((res: any) => this.extractResponseData(res)),
+        catchError(this.handleError)
+      );
   }
   // Non-typed response extraction
-  private extractResponseData(res: Object): any {
-    const body = res;
-    return body || {};
+  private extractResponseData(res: any): MovieResponse[] {
+    const movies: MovieResponse[] = res;
+    return movies || [];
   }
 
   private handleError(error: HttpErrorResponse): any {

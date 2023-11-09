@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserLoginService } from '../fetch-api-data.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-login-form',
@@ -13,7 +14,8 @@ export class UserLoginFormComponent {
   constructor(
     public fetchApiData: UserLoginService,
     public dialogRef: MatDialogRef<UserLoginFormComponent>,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    public router: Router
   ) {}
 
   loginUser(): void {
@@ -22,10 +24,13 @@ export class UserLoginFormComponent {
       .subscribe({
         next: (result) => {
           console.log(result);
+          localStorage.setItem('user', result.user.Username);
+          localStorage.setItem('token', result.token);
           this.dialogRef.close();
           this.snackBar.open('Login Successful', 'OK', {
             duration: 2000,
           });
+          this.router.navigate(['movies']);
         },
 
         error: (result) => {
