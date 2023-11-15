@@ -10,20 +10,26 @@ import { map } from 'rxjs/operators';
 //Declaring the api url that will provide data for the client app
 const apiUrl = 'https://my-flix330.herokuapp.com/';
 
-enum GENRE_TYPES {
-  ACTION = 'action',
-  DRAMA = 'drama',
-  COMEDY = 'comedy',
+export enum GENRE_TYPES {
+  ACTION = 'Action',
+  DRAMA = 'Drama',
+  COMEDY = 'Comedy',
+  HORROR = 'Horror',
+  THRILLER = 'Thriller',
 }
 
-interface MovieResponse {
+export interface MovieResponse {
   id: string;
   title: string;
   genre: GENRE_TYPES;
   director: string;
   cast: string[];
+  imgPath: string;
 }
 
+export interface MovieList {
+  movies: MovieResponse[];
+}
 ////////////////////////////// GET //////////////////////////////
 
 /////////////// GET ALL MOVIES ///////////////
@@ -47,8 +53,21 @@ export class GetAllMoviesService {
       );
   }
   // Non-typed response extraction
-  private extractResponseData(res: any): MovieResponse[] {
-    const movies: MovieResponse[] = res;
+  private extractResponseData(res: any): MovieList {
+    const movies: MovieList = {
+      movies: res.map((movie: any) => {
+        const ret: MovieResponse = {
+          id: movie._id,
+          title: movie.Title,
+          genre: movie.Genre.Name,
+          director: movie.Director[0]?.Name,
+          cast: movie.Actors,
+          imgPath: movie.ImagePath,
+        };
+
+        return ret;
+      }),
+    };
     return movies || [];
   }
 
@@ -164,6 +183,16 @@ export class GetGenreService {
 }
 
 /////////////// GET USER ///////////////
+export interface User {
+  id: string;
+  username: string;
+  eMail: string;
+  birthday: string;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 export class GetUserService {
   constructor(private http: HttpClient) {}
 
@@ -178,9 +207,31 @@ export class GetUserService {
       .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
   // Non-typed response extraction
-  private extractResponseData(res: Object): any {
-    const body = res;
-    return body || {};
+  private extractResponseData(res: any): User {
+    if (!res) {
+      const empty: User = {
+        id: '',
+        username: '',
+        eMail: '',
+        birthday: '',
+      };
+      return empty;
+    }
+    const date: Date = new Date(res.Birthday);
+    const formatedDate: string =
+      date.getUTCFullYear().toString().padStart(2, '0') +
+      '-' +
+      (date.getUTCMonth() + 1).toString().padStart(2, '0') +
+      '-' +
+      date.getUTCDate().toString().padStart(2, '0');
+
+    const body: User = {
+      id: res._id,
+      username: res.Username,
+      eMail: res.Email,
+      birthday: formatedDate,
+    };
+    return body;
   }
 
   private handleError(error: HttpErrorResponse): any {
@@ -196,6 +247,10 @@ export class GetUserService {
 }
 
 /////////////// GET FAVORITE MOVIE ///////////////
+
+@Injectable({
+  providedIn: 'root',
+})
 export class GetFavortieMoviesService {
   constructor(private http: HttpClient) {}
 
@@ -210,9 +265,10 @@ export class GetFavortieMoviesService {
       .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
   // Non-typed response extraction
-  private extractResponseData(res: any): any {
-    const body = res.FavoriteMovies;
-    return body || {};
+  private extractResponseData(res: any): string[] {
+    console.log(res);
+    let movieIDs: string[] = res.FavoriteMovies;
+    return movieIDs || [];
   }
 
   private handleError(error: HttpErrorResponse): any {
@@ -223,7 +279,7 @@ export class GetFavortieMoviesService {
         `Error Status code ${error.status}, ` + `Error body is: ${error.error}`
       );
     }
-    return throwError(() => 'Something bad happened; please try again later.');
+    return throwError(() => 'Unable to get movie list');
   }
 }
 
@@ -316,13 +372,26 @@ export class AddFavoriteMovieService {
 ////////////////////////////// PUT //////////////////////////////
 
 /////////////// EDIT USER ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class EditUserService {
   constructor(private http: HttpClient) {}
 
-  public editUser(username: string, userInfo: any): Observable<any> {
+  public editUser(
+    originalUsername: string,
+    userData: User,
+    password: string
+  ): Observable<any> {
     const token = localStorage.getItem('token');
+    const userInfo = {
+      Username: userData.username,
+      Password: password,
+      Email: userData.eMail,
+      Birthday: userData.birthday,
+    };
     return this.http
-      .put(apiUrl + 'users/' + username, userInfo, {
+      .put(apiUrl + 'users/' + originalUsername, userInfo, {
         headers: new HttpHeaders({
           Authorization: 'Bearer ' + token,
         }),

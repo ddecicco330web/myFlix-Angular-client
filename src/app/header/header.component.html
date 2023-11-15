@@ -1,0 +1,19 @@
+<div
+  style="
+    display: flex;
+    width: 100%;
+    position: fixed;
+    z-index: 999;
+    background-color: white;
+  "
+>
+  <mat-menu #appMenu="matMenu">
+    <button mat-menu-item (click)="goToAllMoviesView()">Home</button>
+    <button mat-menu-item (click)="goToUserProfileView()">Profile</button>
+    <button mat-menu-item (click)="signOut()">Sign Out</button>
+  </mat-menu>
+
+  <button mat-icon-button [matMenuTriggerFor]="appMenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+</div>

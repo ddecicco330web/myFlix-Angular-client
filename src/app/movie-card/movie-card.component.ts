@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GetAllMoviesService } from '../fetch-api-data.service';
+import { GetAllMoviesService, MovieList } from '../fetch-api-data.service';
 
 @Component({
   selector: 'app-movie-card',
@@ -7,7 +7,7 @@ import { GetAllMoviesService } from '../fetch-api-data.service';
   styleUrls: ['./movie-card.component.scss'],
 })
 export class MovieCardComponent implements OnInit {
-  movies: any[] = [];
+  movieList: MovieList = { movies: [] };
 
   constructor(public fetchMovies: GetAllMoviesService) {}
 
@@ -17,10 +17,9 @@ export class MovieCardComponent implements OnInit {
 
   getMovies(): void {
     this.fetchMovies.getAllMovies().subscribe({
-      next: (resp: any) => {
-        this.movies = resp;
-        console.log(this.movies);
-        return this.movies;
+      next: (resp: MovieList) => {
+        this.movieList = resp;
+        return this.movieList;
       },
     });
   }
