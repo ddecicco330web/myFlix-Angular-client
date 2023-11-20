@@ -1,0 +1,23 @@
+<app-header></app-header>
+<div
+  style="display: flex; width: 100%; padding-top: 50px; justify-content: center"
+>
+  <mat-card>
+    <mat-card-header style="display: flex; justify-content: center">
+      {{ directorInfo.name }}
+    </mat-card-header>
+
+    <mat-card-content style="display: flex; flex-direction: row">
+      <img
+        src="{{ directorInfo.imgPath }}"
+        alt="{{ directorInfo.name }}"
+        style="height: 300px"
+      />
+
+      <div style="padding-left: 5px">
+        <p>Birth Year: {{ directorInfo.birthYear }}</p>
+        {{ directorInfo.bio }}
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

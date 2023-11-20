@@ -25,10 +25,32 @@ export interface MovieResponse {
   director: string;
   cast: string[];
   imgPath: string;
+  description: string;
+  releaseYear: string;
+  favorite: boolean;
 }
 
 export interface MovieList {
   movies: MovieResponse[];
+}
+
+export interface User {
+  id: string;
+  username: string;
+  eMail: string;
+  birthday: string;
+}
+
+export interface Genre {
+  name: string;
+  description: string;
+}
+
+export interface Director {
+  name: string;
+  bio: string;
+  birthYear: string;
+  imgPath: string;
 }
 ////////////////////////////// GET //////////////////////////////
 
@@ -56,6 +78,13 @@ export class GetAllMoviesService {
   private extractResponseData(res: any): MovieList {
     const movies: MovieList = {
       movies: res.map((movie: any) => {
+        const date: Date = new Date(movie.ReleaseYear[0]);
+        const formatedDate: string =
+          date.getUTCFullYear().toString().padStart(2, '0') +
+          '-' +
+          (date.getUTCMonth() + 1).toString().padStart(2, '0') +
+          '-' +
+          date.getUTCDate().toString().padStart(2, '0');
         const ret: MovieResponse = {
           id: movie._id,
           title: movie.Title,
@@ -63,6 +92,9 @@ export class GetAllMoviesService {
           director: movie.Director[0]?.Name,
           cast: movie.Actors,
           imgPath: movie.ImagePath,
+          description: movie.Description,
+          releaseYear: formatedDate,
+          favorite: false,
         };
 
         return ret;
@@ -84,6 +116,9 @@ export class GetAllMoviesService {
 }
 
 /////////////// GET ONE MOVIE ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class GetOneMovieService {
   constructor(private http: HttpClient) {}
 
@@ -102,7 +137,25 @@ export class GetOneMovieService {
   }
   // Non-typed response extraction
   private extractResponseData(res: any): MovieResponse {
-    const body = res;
+    const date: Date = new Date(res.ReleaseYear[0]);
+    const formatedDate: string =
+      date.getUTCFullYear().toString().padStart(2, '0') +
+      '-' +
+      (date.getUTCMonth() + 1).toString().padStart(2, '0') +
+      '-' +
+      date.getUTCDate().toString().padStart(2, '0');
+
+    const body: MovieResponse = {
+      id: res._id,
+      title: res.Title,
+      genre: res.Genre.Name,
+      director: res.Director[0].Name,
+      releaseYear: formatedDate,
+      cast: res.Actors,
+      description: res.Description,
+      imgPath: res.ImagePath,
+      favorite: false,
+    };
     return body || {};
   }
 
@@ -119,6 +172,9 @@ export class GetOneMovieService {
 }
 
 /////////////// GET DIRECTOR ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class GetDirectorService {
   constructor(private http: HttpClient) {}
 
@@ -133,8 +189,21 @@ export class GetDirectorService {
       .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
   // Non-typed response extraction
-  private extractResponseData(res: Object): any {
-    const body = res;
+  private extractResponseData(res: any): Director {
+    const date: Date = new Date(res[0].BirthYear);
+    const formatedDate: string =
+      date.getUTCFullYear().toString().padStart(2, '0') +
+      '-' +
+      (date.getUTCMonth() + 1).toString().padStart(2, '0') +
+      '-' +
+      date.getUTCDate().toString().padStart(2, '0');
+
+    const body: Director = {
+      name: res[0].Name,
+      bio: res[0].Bio,
+      birthYear: formatedDate,
+      imgPath: res[0].ImagePath,
+    };
     return body || {};
   }
 
@@ -151,6 +220,9 @@ export class GetDirectorService {
 }
 
 /////////////// GET GENRE ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class GetGenreService {
   constructor(private http: HttpClient) {}
 
@@ -165,8 +237,11 @@ export class GetGenreService {
       .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
   // Non-typed response extraction
-  private extractResponseData(res: Object): any {
-    const body = res;
+  private extractResponseData(res: any): Genre {
+    const body: Genre = {
+      name: res.Name,
+      description: res.Description,
+    };
     return body || {};
   }
 
@@ -183,13 +258,6 @@ export class GetGenreService {
 }
 
 /////////////// GET USER ///////////////
-export interface User {
-  id: string;
-  username: string;
-  eMail: string;
-  birthday: string;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -343,17 +411,24 @@ export class UserLoginService {
 }
 
 /////////////// ADD FAVORITE MOVIE ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class AddFavoriteMovieService {
   constructor(private http: HttpClient) {}
 
   public addFavoriteMovie(username: string, movieID: string): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http
-      .post(apiUrl + 'users/' + username + 'movies/' + movieID, {
-        headers: new HttpHeaders({
-          Authorization: 'Bearer ' + token,
-        }),
-      })
+      .post(
+        apiUrl + 'users/' + username + '/movies/' + movieID,
+        {},
+        {
+          headers: new HttpHeaders({
+            Authorization: 'Bearer ' + token,
+          }),
+        }
+      )
       .pipe(catchError(this.handleError));
   }
 
@@ -414,6 +489,9 @@ export class EditUserService {
 ////////////////////////////// DELETE //////////////////////////////
 
 /////////////// DELETE USER ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class DeleteUserService {
   constructor(private http: HttpClient) {}
 
@@ -424,11 +502,13 @@ export class DeleteUserService {
         headers: new HttpHeaders({
           Authorization: 'Bearer ' + token,
         }),
+        responseType: 'text' as 'json',
       })
       .pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse): any {
+    console.log(error);
     if (error.error instanceof ErrorEvent) {
       console.error('Some error occurred:', error.error.message);
     } else {
@@ -441,6 +521,9 @@ export class DeleteUserService {
 }
 
 /////////////// DELETE FAVORITE MOVIE ///////////////
+@Injectable({
+  providedIn: 'root',
+})
 export class DeleteFavoriteMovieService {
   constructor(private http: HttpClient) {}
 
@@ -450,7 +533,7 @@ export class DeleteFavoriteMovieService {
   ): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http
-      .delete(apiUrl + 'users/' + username + 'movies/' + movieID, {
+      .delete(apiUrl + 'users/' + username + '/movies/' + movieID, {
         headers: new HttpHeaders({
           Authorization: 'Bearer ' + token,
         }),

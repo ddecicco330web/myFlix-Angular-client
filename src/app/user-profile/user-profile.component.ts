@@ -7,9 +7,12 @@ import {
   GetAllMoviesService,
   MovieList,
   MovieResponse,
-  GENRE_TYPES,
+  AddFavoriteMovieService,
+  DeleteFavoriteMovieService,
+  DeleteUserService,
 } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
@@ -30,7 +33,11 @@ export class UserProfileComponent implements OnInit {
     public editUserService: EditUserService,
     public snackBar: MatSnackBar,
     public getFavMoviesService: GetFavortieMoviesService,
-    public getMoviesService: GetAllMoviesService
+    public getMoviesService: GetAllMoviesService,
+    public addFavoriteService: AddFavoriteMovieService,
+    public removeFavoriteService: DeleteFavoriteMovieService,
+    public deleteUserService: DeleteUserService,
+    public router: Router
   ) {
     this.user = {
       id: '',
@@ -82,10 +89,25 @@ export class UserProfileComponent implements OnInit {
       });
   }
 
+  deleteUser(): void {
+    const username = localStorage.getItem('user');
+
+    if (username) {
+      this.deleteUserService.deleteUser(username).subscribe({
+        next: (resp) => {
+          console.log('success');
+          localStorage.clear();
+          this.router.navigate(['welcome']);
+        },
+      });
+    }
+  }
+
   getFavoriteMovies(): void {
     this.getFavMoviesService.getFavoriteMovies(this.user.username).subscribe({
       next: (res: string[]) => {
         this.movieIDs = res;
+        console.log(this.movieIDs);
 
         this.getMoviesService.getAllMovies().subscribe({
           next: (res: MovieList) => {
@@ -94,7 +116,10 @@ export class UserProfileComponent implements OnInit {
               let movie = this.movieList.movies.find(
                 (movie: MovieResponse) => movie.id === id
               );
-              if (movie) this.favoriteList.movies.push(movie);
+              if (movie) {
+                movie.favorite = true;
+                this.favoriteList.movies.push(movie);
+              }
             });
           },
         });
@@ -106,5 +131,42 @@ export class UserProfileComponent implements OnInit {
         });
       },
     });
+  }
+
+  addFavoriteMovie(movie: MovieResponse): void {
+    if (localStorage.getItem('user')) {
+      this.addFavoriteService
+        .addFavoriteMovie(localStorage.getItem('user')!, movie.id)
+        .subscribe({
+          next: (resp) => {
+            movie.favorite = true;
+          },
+        });
+    }
+  }
+
+  removeFavoriteMovie(movie: MovieResponse): void {
+    console.log(movie.id, localStorage.getItem('token'));
+    if (localStorage.getItem('user')) {
+      this.removeFavoriteService
+        .deleteFavoriteMovie(localStorage.getItem('user')!, movie.id)
+        .subscribe({
+          next: (resp) => {
+            movie.favorite = false;
+          },
+        });
+    }
+  }
+
+  goToGenreInfo(genreName: string): void {
+    this.router.navigate(['genres', genreName]);
+  }
+
+  goToDirectorInfo(directorName: string): void {
+    this.router.navigate(['directors', directorName]);
+  }
+
+  goToMovieInfo(movieTitle: string): void {
+    this.router.navigate(['movies', movieTitle]);
   }
 }

@@ -19,10 +19,33 @@
         style="margin-bottom: 50px; width: 300px"
       />
       <mat-card-actions style="display: flex; position: absolute; bottom: 0">
-        <button mat-button color="primary">Genre</button>
-        <button mat-button color="primary">Director</button>
-        <button mat-button color="primary">Synopsis</button>
-        <mat-icon>favorite_border</mat-icon>
+        <button mat-button (click)="goToGenreInfo(movie.genre)" color="primary">
+          Genre
+        </button>
+        <button
+          mat-button
+          (click)="goToDirectorInfo(movie.director)"
+          color="primary"
+        >
+          Director
+        </button>
+        <button mat-button (click)="goToMovieInfo(movie.title)" color="primary">
+          Synopsis
+        </button>
+        <button
+          *ngIf="!movie.favorite"
+          mat-icon-button
+          (click)="addFavoriteMovie(movie)"
+        >
+          <mat-icon>favorite_border</mat-icon>
+        </button>
+        <button
+          *ngIf="movie.favorite"
+          mat-icon-button
+          (click)="removeFavoriteMovie(movie)"
+        >
+          <mat-icon [ngStyle]="{ color: 'red' }">favorite</mat-icon>
+        </button>
       </mat-card-actions>
     </mat-card>
   </div>
