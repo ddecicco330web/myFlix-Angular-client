@@ -15,6 +15,20 @@
       />
 
       <div style="padding-left: 5px">
+        <button
+          *ngIf="!movieInfo.favorite"
+          mat-icon-button
+          (click)="addFavoriteMovie(movieInfo)"
+        >
+          <mat-icon>favorite_border</mat-icon>
+        </button>
+        <button
+          *ngIf="movieInfo.favorite"
+          mat-icon-button
+          (click)="removeFavoriteMovie(movieInfo)"
+        >
+          <mat-icon [ngStyle]="{ color: 'red' }">favorite</mat-icon>
+        </button>
         <p>Release Year: {{ movieInfo.releaseYear }}</p>
         <p>
           Director:

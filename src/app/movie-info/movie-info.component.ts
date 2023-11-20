@@ -4,6 +4,9 @@ import {
   MovieResponse,
   GetOneMovieService,
   GENRE_TYPES,
+  GetFavortieMoviesService,
+  AddFavoriteMovieService,
+  DeleteFavoriteMovieService,
 } from '../fetch-api-data.service';
 import { Router } from '@angular/router';
 
@@ -14,10 +17,14 @@ import { Router } from '@angular/router';
 })
 export class MovieInfoComponent implements OnInit {
   movieInfo: MovieResponse;
+  favoriteIDList: string[] = [];
 
   constructor(
     public route: ActivatedRoute,
     public fetchApiData: GetOneMovieService,
+    public fetchFavorites: GetFavortieMoviesService,
+    public addFavoriteService: AddFavoriteMovieService,
+    public removeFavoriteService: DeleteFavoriteMovieService,
     public router: Router
   ) {
     this.movieInfo = {
@@ -41,6 +48,7 @@ export class MovieInfoComponent implements OnInit {
     });
 
     this.getMovieInfo();
+    this.getFavorites();
   }
 
   getMovieInfo(): void {
@@ -57,5 +65,48 @@ export class MovieInfoComponent implements OnInit {
 
   goToDirectorInfo(directorName: string): void {
     this.router.navigate(['directors', directorName]);
+  }
+
+  getFavorites(): void {
+    if (localStorage.getItem('user')) {
+      this.fetchFavorites
+        .getFavoriteMovies(localStorage.getItem('user')!)
+        .subscribe({
+          next: (resp) => {
+            this.favoriteIDList = resp;
+
+            const movie = this.favoriteIDList.find(
+              (id: string) => id === this.movieInfo.id
+            );
+            if (movie) {
+              this.movieInfo.favorite = true;
+            }
+          },
+        });
+    }
+  }
+
+  addFavoriteMovie(movie: MovieResponse): void {
+    if (localStorage.getItem('user')) {
+      this.addFavoriteService
+        .addFavoriteMovie(localStorage.getItem('user')!, movie.id)
+        .subscribe({
+          next: (resp) => {
+            movie.favorite = true;
+          },
+        });
+    }
+  }
+
+  removeFavoriteMovie(movie: MovieResponse): void {
+    if (localStorage.getItem('user')) {
+      this.removeFavoriteService
+        .deleteFavoriteMovie(localStorage.getItem('user')!, movie.id)
+        .subscribe({
+          next: (resp) => {
+            movie.favorite = false;
+          },
+        });
+    }
   }
 }
