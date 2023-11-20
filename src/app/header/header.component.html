@@ -1,19 +1,17 @@
-<div
-  style="
-    display: flex;
-    width: 100%;
-    position: fixed;
-    z-index: 999;
-    background-color: white;
-  "
->
+<div id="header">
+  <img
+    src="../../assets/myFlix_Logo.png"
+    alt="myFlix Logo"
+    id="logo"
+    (click)="goToAllMoviesView()"
+  />
   <mat-menu #appMenu="matMenu">
     <button mat-menu-item (click)="goToAllMoviesView()">Home</button>
     <button mat-menu-item (click)="goToUserProfileView()">Profile</button>
     <button mat-menu-item (click)="signOut()">Sign Out</button>
   </mat-menu>
 
-  <button mat-icon-button [matMenuTriggerFor]="appMenu">
+  <button mat-icon-button [matMenuTriggerFor]="appMenu" id="menu">
     <mat-icon>more_vert</mat-icon>
   </button>
 </div>

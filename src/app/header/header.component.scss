@@ -1,0 +1,22 @@
+#header {
+  display: flex;
+  width: 100%;
+  position: fixed;
+  z-index: 999;
+  background-color: red;
+  min-height: 50px;
+}
+
+#logo {
+  padding: 5px;
+  width: 30%;
+}
+
+#logo:hover {
+  cursor: pointer;
+}
+
+#menu {
+  position: fixed;
+  right: 0;
+}

@@ -1,0 +1,36 @@
+$movie-card-width: 300px;
+$movie-card-margin: 10px;
+
+#content {
+  display: flex;
+  padding-top: 50px;
+  width: 100%;
+  justify-content: center;
+}
+
+#movies-container {
+  display: flex;
+  width: ($movie-card-width + $movie-card-margin) * 3;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.movie-card {
+  flex: 0 1 auto;
+  margin-right: $movie-card-margin;
+  margin-top: $movie-card-margin;
+  width: $movie-card-width;
+}
+
+@media (max-width: (($movie-card-width+$movie-card-margin) * 3)) {
+  #movies-container {
+    width: ($movie-card-width + $movie-card-margin) * 2;
+  }
+}
+
+@media (max-width: (($movie-card-width+$movie-card-margin) * 2)) {
+  #movies-container {
+    width: ($movie-card-width + $movie-card-margin);
+  }
+}

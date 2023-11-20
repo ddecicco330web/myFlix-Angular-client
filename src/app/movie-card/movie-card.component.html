@@ -1,14 +1,7 @@
 <app-header></app-header>
-<div
-  style="display: flex; padding-top: 50px; width: 100%; justify-content: center"
->
-  <div
-    style="display: flex; width: 80%; justify-content: start; flex-wrap: wrap"
-  >
-    <mat-card
-      *ngFor="let movie of movieList.movies"
-      style="flex: 0 1 auto; margin-right: 5px; width: 300px"
-    >
+<div id="content">
+  <div id="movies-container">
+    <mat-card *ngFor="let movie of movieList.movies" class="movie-card">
       <mat-card-header>
         <mat-card-title>{{ movie.title }}</mat-card-title>
         <mat-card-subtitle>Directed by: {{ movie.director }}</mat-card-subtitle>
@@ -16,7 +9,7 @@
       <img
         src="{{ movie.imgPath }}"
         alt="{{ movie.title }}"
-        style="margin-bottom: 50px; width: 300px"
+        style="margin-bottom: 50px"
       />
       <mat-card-actions style="display: flex; position: absolute; bottom: 0">
         <button mat-button (click)="goToGenreInfo(movie.genre)" color="primary">

@@ -1,0 +1,10 @@
+#movie-info-container {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: 400px) {
+  #movie-info-container {
+    flex-direction: column;
+  }
+}

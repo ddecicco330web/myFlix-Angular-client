@@ -1,14 +1,6 @@
 <app-header></app-header>
-<div
-  style="
-    display: flex;
-    padding-top: 50px;
-    align-items: center;
-    width: 100%;
-    flex-direction: column;
-  "
->
-  <mat-card style="max-width: 500px">
+<div id="content">
+  <mat-card id="user-info-container">
     <mat-card-header> User Proile </mat-card-header>
     <mat-card-content>
       <form>
@@ -64,7 +56,12 @@
     <mat-card-actions
       style="display: flex; flex-direction: column; align-items: start"
     >
-      <button mat-raised-button (click)="updateUser()" color="primary">
+      <button
+        mat-raised-button
+        (click)="updateUser()"
+        color="primary"
+        style="margin-bottom: 10px"
+      >
         Save
       </button>
       <button mat-raised-button (click)="deleteUser()" color="primary">
@@ -75,19 +72,8 @@
 
   <h2>Favorites</h2>
 
-  <div
-    style="
-      display: flex;
-      padding-top: 50px;
-      width: 80%;
-      flex-wrap: wrap;
-      justify-content: start;
-    "
-  >
-    <mat-card
-      *ngFor="let movie of favoriteList.movies"
-      style="flex: 0 1 auto; margin-right: 5px; width: 300px"
-    >
+  <div id="movies-container">
+    <mat-card *ngFor="let movie of favoriteList.movies" class="movie-card">
       <mat-card-header>
         <mat-card-title>{{ movie.title }}</mat-card-title>
         <mat-card-subtitle>Directed by: {{ movie.director }}</mat-card-subtitle>
@@ -95,7 +81,7 @@
       <img
         src="{{ movie.imgPath }}"
         alt="{{ movie.title }}"
-        style="margin-bottom: 50px; width: 300px"
+        style="margin-bottom: 50px"
       />
       <mat-card-actions style="display: flex; position: absolute; bottom: 0">
         <button mat-button (click)="goToGenreInfo(movie.genre)" color="primary">
