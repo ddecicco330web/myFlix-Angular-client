@@ -81,7 +81,6 @@ export class UserProfileComponent implements OnInit {
           });
         },
         error: (result) => {
-          console.log(result);
           this.snackBar.open(result, 'OK', {
             duration: 2000,
           });
@@ -95,7 +94,6 @@ export class UserProfileComponent implements OnInit {
     if (username) {
       this.deleteUserService.deleteUser(username).subscribe({
         next: (resp) => {
-          console.log('success');
           localStorage.clear();
           this.router.navigate(['welcome']);
         },
@@ -107,7 +105,6 @@ export class UserProfileComponent implements OnInit {
     this.getFavMoviesService.getFavoriteMovies(this.user.username).subscribe({
       next: (res: string[]) => {
         this.movieIDs = res;
-        console.log(this.movieIDs);
 
         this.getMoviesService.getAllMovies().subscribe({
           next: (res: MovieList) => {
@@ -125,7 +122,6 @@ export class UserProfileComponent implements OnInit {
         });
       },
       error: (result) => {
-        console.log(result);
         this.snackBar.open(result, 'OK', {
           duration: 2000,
         });
@@ -146,7 +142,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   removeFavoriteMovie(movie: MovieResponse): void {
-    console.log(movie.id, localStorage.getItem('token'));
     if (localStorage.getItem('user')) {
       this.removeFavoriteService
         .deleteFavoriteMovie(localStorage.getItem('user')!, movie.id)

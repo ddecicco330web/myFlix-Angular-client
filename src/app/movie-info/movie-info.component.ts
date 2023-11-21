@@ -73,16 +73,13 @@ export class MovieInfoComponent implements OnInit {
         .subscribe({
           next: (resp) => {
             this.favoriteIDList = resp;
-            console.log(this.movieInfo);
-            console.log(this.favoriteIDList);
 
             const movie = this.favoriteIDList.find(
               (id: string) => id === this.movieInfo.id
             );
             if (movie) {
-              console.log('true');
               this.movieInfo.favorite = true;
-            } else console.log('false');
+            }
           },
         });
     }

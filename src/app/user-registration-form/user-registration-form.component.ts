@@ -20,14 +20,12 @@ export class UserRegistrationFormComponent {
   registerUser(): void {
     this.fetchApiData.userRegistration(this.userData).subscribe({
       next: (result) => {
-        console.log(result);
         this.dialogRef.close();
         this.snackBar.open('User registration successful', 'OK', {
           duration: 2000,
         });
       },
       error: (result) => {
-        console.log(result);
         this.snackBar.open(result, 'OK', {
           duration: 2000,
         });

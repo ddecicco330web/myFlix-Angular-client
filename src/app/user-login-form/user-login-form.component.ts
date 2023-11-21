@@ -23,7 +23,6 @@ export class UserLoginFormComponent {
       .userLogin(this.userData.Username, this.userData.Password)
       .subscribe({
         next: (result) => {
-          console.log(result);
           localStorage.setItem('user', result.user.Username);
           localStorage.setItem('token', result.token);
           this.dialogRef.close();
@@ -34,7 +33,6 @@ export class UserLoginFormComponent {
         },
 
         error: (result) => {
-          console.log(result);
           this.dialogRef.close();
           this.snackBar.open(result, 'OK', {
             duration: 2000,
