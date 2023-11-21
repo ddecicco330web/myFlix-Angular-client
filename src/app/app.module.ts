@@ -30,6 +30,9 @@ import { GenreInfoComponentComponent } from './genre-info-component/genre-info-c
 import { DirectorInfoComponent } from './director-info/director-info.component';
 import { MovieInfoComponent } from './movie-info/movie-info.component';
 
+/**
+ * Defines the routes for the application.
+ */
 const appRoutes: Routes = [
   { path: 'welcome', component: WelcomePageComponent },
   { path: 'movies', component: MovieCardComponent },
@@ -40,6 +43,9 @@ const appRoutes: Routes = [
   { path: '', redirectTo: 'welcome', pathMatch: 'prefix' },
 ];
 
+/**
+ * Main application module that manages dependencies, components, and routes.
+ */
 @NgModule({
   declarations: [
     AppComponent,

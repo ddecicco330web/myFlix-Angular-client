@@ -4,10 +4,10 @@ import { UserLoginFormComponent } from '../user-login-form/user-login-form.compo
 import { UserRegistrationFormComponent } from '../user-registration-form/user-registration-form.component';
 
 /**
- * WelcomePageComponent represents the main component for the welcome page.
+ * @description WelcomePageComponent represents the main component for the welcome page.
  *
- * This component is responsible for displaying the welcome page and handling
- * user registration and login dialogs.
+ * @description This component is responsible for displaying the welcome page and handling
+ * @description user registration and login dialogs.
  */
 @Component({
   selector: 'app-welcome-page',
@@ -18,7 +18,7 @@ export class WelcomePageComponent {
   /**
    * Creates an instance of WelcomePageComponent.
    *
-   * @param dialog - The MatDialog service for opening dialogs.
+   * @param {MatDialog} dialog - The MatDialog service for opening dialogs.
    */
   constructor(public dialog: MatDialog) {}
 
