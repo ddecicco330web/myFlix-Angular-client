@@ -12,7 +12,11 @@
           type="text"
           name="Username"
           required
+          #usernameInput="ngModel"
         />
+        <mat-error *ngIf="usernameInput.errors?.['required']"
+          >Username required</mat-error
+        >
       </mat-form-field>
       <mat-form-field>
         <input
@@ -22,12 +26,29 @@
           placeholder="Password"
           name="Password"
           required
+          #passwordInput="ngModel"
         />
+        <mat-error *ngIf="passwordInput.errors?.['required']"
+          >Password required</mat-error
+        >
       </mat-form-field>
     </form>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button (click)="loginUser()" color="primary">
+    <button
+      mat-raised-button
+      color="primary"
+      disabled=""
+      *ngIf="usernameInput.errors?.['required'] || passwordInput.errors?.['required']"
+    >
+      Login
+    </button>
+    <button
+      mat-raised-button
+      (click)="loginUser()"
+      color="primary"
+      *ngIf="!usernameInput.errors?.['required'] && !passwordInput.errors?.['required']"
+    >
       Login
     </button>
   </mat-card-actions>

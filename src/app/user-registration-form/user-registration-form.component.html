@@ -4,7 +4,7 @@
   </mat-card-header>
   <mat-card-content>
     <form>
-      <mat-form-field>
+      <mat-form-field style="width: 100%">
         <input
           matInput
           [(ngModel)]="userData.Username"
@@ -12,9 +12,13 @@
           type="text"
           name="Username"
           required
+          minlength="5"
         />
+        <mat-error *ngIf="userData.Username.length < 5"
+          >Username must be at least 5 characters long</mat-error
+        >
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field style="width: 100%">
         <input
           matInput
           [(ngModel)]="userData.Password"
@@ -22,19 +26,26 @@
           placeholder="Password"
           name="Password"
           required
+          #passwordInput="ngModel"
         />
+        <mat-error *ngIf="emailInput.errors?.['required']"
+          >Password Required</mat-error
+        >
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field style="width: 100%">
         <input
           matInput
           [(ngModel)]="userData.Email"
           type="email"
           placeholder="Email"
           name="Email"
+          pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}"
           required
+          #emailInput="ngModel"
         />
+        <mat-error *ngIf="emailInput.invalid">Enter valid email</mat-error>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field style="width: 100%">
         <input
           matInput
           [(ngModel)]="userData.Birthday"
@@ -42,12 +53,29 @@
           placeholder="Birthday"
           name="Birthday"
           required
+          #birthDateInput="ngModel"
         />
+        <mat-error *ngIf="birthDateInput.errors?.['required']"
+          >Birthday required</mat-error
+        >
       </mat-form-field>
     </form>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button (click)="registerUser()" color="primary">
+    <button
+      mat-raised-button
+      color="primary"
+      disabled=""
+      *ngIf="userData.Username.length < 5 || emailInput.invalid || passwordInput.errors?.['required'] || birthDateInput.errors?.['required']"
+    >
+      Sign Up
+    </button>
+    <button
+      mat-raised-button
+      (click)="registerUser()"
+      color="primary"
+      *ngIf="userData.Username.length >= 5 && emailInput.valid && !passwordInput.errors?.['required'] && !birthDateInput.errors?.['required']"
+    >
       Sign Up
     </button>
   </mat-card-actions>
