@@ -6,8 +6,8 @@ import { UserRegistrationFormComponent } from '../user-registration-form/user-re
 /**
  * @description WelcomePageComponent represents the main component for the welcome page.
  *
- * @description This component is responsible for displaying the welcome page and handling
- * @description user registration and login dialogs.
+ *  This component is responsible for displaying the welcome page and handling
+ *  user registration and login dialogs.
  */
 @Component({
   selector: 'app-welcome-page',
